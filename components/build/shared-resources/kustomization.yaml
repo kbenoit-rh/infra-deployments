@@ -18,6 +18,9 @@ resources:
 - shared-resources-components.yaml
 - redhat-appstudio-staginguser-secret.yaml
 - infra-deployments-pr-creator.yaml
+- redhat-appstudio-user-workload-sharedsecret.yaml
+- globally-shared-secrets-clusterrole.yaml
+- test-team-snyk-shared-secret.yaml
 
 images:
 - name: \${NODE_DRIVER_REGISTRAR_IMAGE}
