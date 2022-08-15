@@ -10,6 +10,8 @@ subjects:
     name: Build team
   - kind: Group
     name: Release team
+  - kind: Group
+    name: Test team
   - kind: User
     name: maysunfaisal
 roleRef:

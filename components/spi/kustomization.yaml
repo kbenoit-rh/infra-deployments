@@ -1,29 +1,22 @@
-resources:
-  - argocd-permissions.yaml
-  - https://github.com/redhat-appstudio/service-provider-integration-operator/config/default?ref=bcb63b7e3207ebc3f755c4e844b32df8ea1edd2f
-  - oauth_route.yaml
-  - https://github.com/redhat-appstudio/service-provider-integration-scm-file-retriever/server/config/default?ref=4edb96c318f86ae3124c139fa775754966baea4d
-  - scm_route.yaml
-  - vault_role.yaml
-  - vault_rolebinding.yaml
-  - .tekton/
-
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+
+resources:
+  - argocd-permissions.yaml
+  - vault/
+  - https://github.com/redhat-appstudio/service-provider-integration-operator/config/default?ref=d09a3b8bcbec01375c9a360ec8ed38cdf5ee501b
+  - oauth_route.yaml
+  - .tekton/
 
 images:
   - name:  quay.io/redhat-appstudio/service-provider-integration-operator
     newName: quay.io/redhat-appstudio/service-provider-integration-operator
-    # 0.5.2
-    newTag: sha-bcb63b7
+    # 0.7.2
+    newTag: d09a3b8bcbec01375c9a360ec8ed38cdf5ee501b
   - name: quay.io/redhat-appstudio/service-provider-integration-oauth
     newName: quay.io/redhat-appstudio/service-provider-integration-oauth
-    # 0.5.6
-    newTag: sha-bc6979a
-  - name: quay.io/redhat-appstudio/service-provider-integration-scm-file-retriever-server
-    newName:  quay.io/redhat-appstudio/service-provider-integration-scm-file-retriever-server
-    # 0.5.2.1
-    newTag: sha-4edb96c
+    # 0.7.2
+    newTag: sha-66bccbc
 
 namespace: spi-system
 
@@ -40,3 +33,19 @@ patches:
       kind: Deployment
       name: oauth-service
     path: oauth-service-deployment-patch.json
+  - target:
+      kind: ConfigMap
+      name: shared-config
+    path: config-patch.json
+
+# we plan to use approle authentication, but it's not ready yet
+# with these dummy secrets, we're satisfying spi deployments, but they're not really used
+secretGenerator:
+  - name: vault-approle-spi-operator
+    literals:
+    - role_id=dummy
+    - secret_id=dummy
+  - name: vault-approle-spi-oauth
+    literals:
+    - role_id=dummy
+    - secret_id=dummy
